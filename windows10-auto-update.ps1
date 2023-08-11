@@ -1,3 +1,6 @@
+# Get admin priviledge
+start-process powershell -verb runas
+
 # Get Execution Priviledge
 Set-ExecutionPolicy Unrestricted -Force
 
