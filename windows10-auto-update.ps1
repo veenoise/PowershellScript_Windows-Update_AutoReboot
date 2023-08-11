@@ -1,5 +1,8 @@
-# Get admin priviledge
-start-process powershell -verb runas
+$isAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
+if (-not $isAdmin) {
+    Start-Process powershell -ArgumentList "-NoProfile ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit
+}
 
 # Get Execution Priviledge
 Set-ExecutionPolicy Unrestricted -Force
@@ -53,7 +56,7 @@ foreach ($UpdateVarElement in $UpdateVar){
 }
 
 # Install all updates, autoreboot, and store log files in C:\
-Get-WindowsUpdate -AcceptAll -Install -AutoReboot -Verbose | Out-File "C:\($env.computername-Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force
+Get-WindowsUpdate -AcceptAll -Install -AutoReboot -Verbose | Out-File "C:\MSUpdate_$(get-date -f 'D:yyyy-MM-dd_T:HH:mm').log" -NoClobber -Force
 
 # View install History
 # Get-WUHistory -Last 100
